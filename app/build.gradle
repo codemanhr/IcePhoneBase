@@ -1,0 +1,65 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
+
+    defaultConfig {
+        applicationId "com.wjr.icephone_base"
+        minSdkVersion 28
+        targetSdkVersion 29
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    testImplementation 'junit:junit:4.12'
+
+    //动态权限申请
+    implementation 'io.reactivex.rxjava2:rxjava:2.2.17'
+    implementation 'androidx.recyclerview:recyclerview:1.2.0-alpha05'
+    ///状态栏
+    implementation('com.github.niorgai:StatusBarCompat:2.3.3', {
+        exclude group: 'androidx.appcompat:appcompat'
+        exclude group: 'com.google.android.material:material'
+    })
+    ///按钮
+    implementation 'top.androidman:superbutton:1.1.1'
+    ///下拉刷新上拉加载
+    implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0'
+    ///左滑返回
+    implementation 'cn.bingoogolapple:bga-swipebacklayout:2.0.1@aar'
+    ///事件通信
+    implementation 'org.greenrobot:eventbus:3.1.1'
+    ///适配器
+    implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:3.0.4'
+    //网络
+    implementation 'com.rxjava.rxhttp:rxhttp:1.4.2'
+    //必须
+    annotationProcessor 'com.rxjava.rxhttp:rxhttp-compiler:1.4.2'
+    //注解处理器，生成RxHttp类,必须
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    //切换主线程，Android工程必须
+    implementation 'com.rxjava.rxhttp:converter-fastjson:1.4.2'
+    //图片
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+
+}
