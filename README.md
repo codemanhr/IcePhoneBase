@@ -77,7 +77,6 @@
 </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 ```
 
-详细的分页加载和下拉刷新的页面请用你的Activity继承BasePagingActivity
 
 
 ### 2.图片相关：
@@ -185,7 +184,122 @@ public class TestFragment extends BaseFragment {
 }
 ```
 
+### 5.适用于上拉加载，下拉刷新的页面类：
 
+```Java
+BasePagingActivity
+```
+
+- 使用示例：
+
+```Java
+
+/**
+ * TestModel为泛型 必须填入
+ */
+public class TestPagingActivity extends BasePagingActivity<TestModel> {
+    
+    /**
+    返回你的空布局Id（就是没有数据的时候，展示的页面的xmlId 
+    */
+    @Override
+    protected int getEmptyViewId() {
+        return 0;
+    }
+
+    @Override
+    protected void initView() {
+        /**
+         *这句话在initView第一句话写，必须写
+         * 作用就是初始化刷新控件，填上你的SmartRefreshLayout的id即可
+         */
+        initSmartRefreshLayout(R.id.layout);
+        
+        ///写你的逻辑
+        ///xxxxx
+
+    }
+
+    ///初始化数据，自动调用
+    @Override
+    protected void initData() {
+
+
+        ApiBuilder builder = new ApiBuilder()
+                .Url("http//xxxx")
+                .Params("page", currentPage)
+        ApiClient.getInstance().doGet(builder, new CallBack<TestModel>() {
+            @Override
+            public void onResponse(TestModel model) {
+
+                //设置内部适配器
+                setPagingAdapter(adapter);
+
+
+                //中间写你初始化的逻辑
+
+
+                //最后处理完数据都要更新SmartRefreshLayout状态，
+                //传入服务器返回的totalPage
+                updateRefreshLayoutState(model.totalPage);
+
+            }
+
+            @Override
+            public void onFail(String msg) {
+
+            }
+        }, TestModel.class, TestPagingActivity.this);
+
+    }
+
+    @Override
+    protected void initListener() {
+
+    }
+
+
+    ///当刷新数据的时候会自动调用这个方法
+    @Override
+    protected void refreshData(int currentPage) {
+        ///一般在此处调用initData()即可
+    }
+
+    ///加载 下一页数据，其中currentPage已经+1，直接用即可
+    @Override
+    protected void requestNextPageData(int currentPage) {
+
+        ApiBuilder builder = new ApiBuilder()
+                .Url("http//xxxx")
+                .Params("page", currentPage)
+        ApiClient.getInstance().doGet(builder, new CallBack<TestModel>() {
+            @Override
+            public void onResponse(TestModel model) {
+                ///写数据更新的逻辑示例：
+                ///拿到内部的PagingAdapter做更新
+                getPagingAdapter().addData(model.getData());
+
+
+                ///更新刷新器状态
+                updateRefreshLayoutState(totolPage);
+            }
+
+
+            @Override
+            public void onFail(String msg) {
+                //如果请求失败了，要调用resetCurrentPage()
+                resetCurrentPage();
+
+            }
+        }, TestModel.class, TestPagingActivity.this);
+    }
+    
+    @Override
+    public void onLimitClick(View view) {
+
+    }
+}
+```
 
 
  
