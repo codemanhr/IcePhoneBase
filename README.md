@@ -17,7 +17,26 @@
 
 ### 1.上拉加载，下拉刷新框架：
 
-1.为了优化用户体验，在使用recyclerView（简称rv）时，如果不需要刷新和加载，那么就利用框架SmartRefreshLayout包裹rv，可以让布局灵活滚动（类似iOS)，提高交互体验，下面就是此纯滚动模式Layout（也就是无需上拉加载下拉刷新的模式Layout）的xml文档属性如下，直接粘贴到xml中即可，在最新的冰峰base项目中，我已经添加，名称如下：layout_pure_scroll_example.xml
+1.为了优化用户体验，在使用recyclerView（简称rv）时，如果不需要刷新和加载，那么就利用框架SmartRefreshLayout包裹rv，可以让布局灵活滚动（类似iOS)，提高交互体验，下面就是此纯滚动模式Layout（也就是无需上拉加载下拉刷新的模式Layout）的xml文档属性如下。
+
+```xml
+<com.scwang.smartrefresh.layout.SmartRefreshLayout
+    android:id="@+id/refreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:srlEnablePureScrollMode="true"
+    app:srlFooterMaxDragRate="5"
+    app:srlReboundDuration="850">
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:overScrollMode="never" />
+
+
+</com.scwang.smartrefresh.layout.SmartRefreshLayout>
+```
  
  <br/>
  
@@ -87,11 +106,84 @@ BottomDialog bottomDialog = new BottomDialog().setFragmentManager(getFragmentMan
         bottomDialog.show();
 ```
 
-### 4.多tab页面
+### 4.多tab页面（ViewPager+Fragment架构)
 
-1.每个fragment：
-未完待续
+- 适配器选用：
+```Java
+//使用你的适配器继承此类即可，下面为使用示例
+public class TestFragmentAdapter extends BaseFragmentAdapter {
+    //你要展示的fragment集合，通过构造方法传入
+    List<Fragment> fragments;
 
+    public TestFragmentAdapter(@NonNull @NotNull FragmentManager fm,List<Fragment> fragments) {
+        super(fm);
+        this.fragments = fragments;
+    }
+
+    @NonNull
+    @NotNull
+    @Override
+    public Fragment getItem(int position) {
+        return fragments.get(position);
+    }
+
+    @Override
+    public int getCount() {
+        return fragments.size();
+    }
+}
+```
+<br/>
+
+- 内部的fragment选择：
+
+所有的fragment必须选用 
+```BaseFragment``` 
+
+其中在贤得家项目为
+```
+BaseCompatibleFragment
+```
+
+- fragment使用方法：
+
+
+```Java
+
+///贤得家项目替换为BaseCompatibleFragment即可
+public class TestFragment extends BaseFragment {
+
+    ///返回你的布局Xml文件ID（R.id.xxxx)
+    @Override
+    protected int getContentViewId() {
+        return 0;
+    }
+
+    ///加载布局
+    @Override
+    protected void initView(View view) {
+
+    }
+
+    ///加载数据（这里面的逻辑自动走懒加载模式，可见才加载）
+    @Override
+    protected void initData() {
+
+    }
+
+    ///加载监听器
+    @Override
+    protected void initListener() {
+
+    }
+
+    ///点击事件（已经进行防抖动处理）
+    @Override
+    public void onLimitClick(View view) {
+
+    }
+}
+```
 
 
 
